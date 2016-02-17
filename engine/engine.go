@@ -10,7 +10,6 @@ import (
 	"strings"
 	"strconv"
 	"fmt"
-	"sync"
 )
 
 type Engine struct {
@@ -27,20 +26,11 @@ func (e *Engine) AddEngine(eng ...interfaces.EngineInterface) {
 }
 
 func (e *Engine) Run() {
-	var wg sync.WaitGroup
-
 	for _, eng := range e.engines {
-		wg.Add(1)
-
-		go func (eng interfaces.EngineInterface) {
-			defer wg.Done()
-			htmlData := e.downloadHTML(eng)
-			list := e.parseHTML(htmlData, eng)
-			eng.SetDataBundle(list)
-		}(eng);
+		htmlData := e.downloadHTML(eng)
+		list := e.parseHTML(htmlData, eng)
+		eng.SetDataBundle(list)
 	}
-
-	wg.Wait()
 }
 
 func (e *Engine) ShowResult() {
