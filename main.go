@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/rodkranz/FindLinksWeb/interfaces"
-	"github.com/rodkranz/FindLinksWeb/searchers"
 	"github.com/rodkranz/FindLinksWeb/engine"
 	"os"
+	"github.com/rodkranz/FindLinksWeb/searchers"
 )
 
 var config 			 = &interfaces.Configuration{}
@@ -26,11 +26,17 @@ func init() {
 }
 
 func main() {
-	bing 	:= searchers.NewBing()
+
+	yahoo   := searchers.NewYahoo()
+	bing    := searchers.NewBing()
+	google  := searchers.NewGoogle()
+	duck    := searchers.NewDuck()
+
 	engine 	:= engine.NewEngine(config)
 
-	engine.AddEngine(bing)
+	engine.AddEngine(bing, google, yahoo, duck)
 	engine.Run()
+	engine.ShowResult()
 
 	os.Exit(0)
 }

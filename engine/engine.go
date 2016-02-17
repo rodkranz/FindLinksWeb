@@ -3,13 +3,13 @@ package engine
 import (
 	"github.com/rodkranz/FindLinksWeb/interfaces"
 
-	"fmt"
 	"net/url"
 	"net/http"
 	"log"
 	"io/ioutil"
 	"strings"
 	"strconv"
+	"fmt"
 )
 
 type Engine struct {
@@ -21,10 +21,42 @@ func NewEngine(conf *interfaces.Configuration) *Engine {
 	return &Engine{config: conf}
 }
 
-func (e *Engine) AddEngine(eng interfaces.EngineInterface) {
-	e.engines = append(e.engines, eng)
+func (e *Engine) AddEngine(eng ...interfaces.EngineInterface) {
+	e.engines = append(e.engines, eng...)
 }
 
+func (e *Engine) Run() {
+
+
+	for _, eng := range e.engines {
+		htmlData := e.downloadHTML(eng)
+		list     := e.parseHTML(htmlData, eng)
+
+		eng.SetDataBundle(list)
+	}
+}
+
+func (e *Engine) ShowResult() {
+	fmt.Println("[+]Find Web Link V1 By rodlopes <dev.rodrigo.lopes@gmail.com>. \n")
+	fmt.Println("[+] Searchers availables")
+
+	for _, eng := range e.engines {
+		fmt.Printf("[+]%v found %v result(s).\n", eng.GetTitle(), len(eng.GetData()))
+	}
+
+	fmt.Println()
+	for _, eng := range e.engines {
+		if len(eng.GetData()) == 0 {
+			continue
+		}
+
+		fmt.Printf("[+] %v \n", eng.GetTitle())
+		for i, v := range eng.GetData() {
+			fmt.Printf("[+][%v] %v\n", i, v)
+		}
+		fmt.Println()
+	}
+}
 
 func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {
 	uri         := eng.GetUrl();
@@ -45,7 +77,6 @@ func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {
 
 	return string(data)
 }
-
 
 
 func (e *Engine) makeUrl(eng interfaces.EngineInterface) string {

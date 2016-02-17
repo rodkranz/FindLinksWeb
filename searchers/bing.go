@@ -1,22 +1,9 @@
 package searchers
 
-import (
-	"regexp"
-)
-const bing_url   = "https://search.yahoo.com/search?p=[WORD]&&ei=UTF-8&b=[PAGE]1"
-const bing_regex = "\" ac-algo ac-21th lh-15\" href=\"(.*?)\" target=\"_blank"
+import "github.com/rodkranz/FindLinksWeb/interfaces"
 
-func NewBing() *Bing {
-	return &Bing{}
+func NewBing() *interfaces.Gas {
+	return &interfaces.Gas{Title: "Bing",
+		Url:   `http://www.bing.com/search?q=[WORD]&first=[PAGE]1`,
+		Regex: `</li><li class=\"b_algo\"><h2><a href=\"(.*?)\" h=\"ID=SERP,`}
 }
-
-type Bing struct {}
-
-func (b *Bing) GetUrl() string {
-	return bing_url
-}
-
-func (b *Bing) GetRegex() *regexp.Regexp {
-	return regexp.MustCompile(bing_regex)
-}
-
