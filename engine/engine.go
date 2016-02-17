@@ -3,19 +3,19 @@ package engine
 import (
 	"github.com/rodkranz/FindLinksWeb/interfaces"
 
-	"net/url"
-	"net/http"
-	"log"
-	"io/ioutil"
-	"strings"
-	"strconv"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 	"sync"
 )
 
 type Engine struct {
-	config     *interfaces.Configuration
-	engines    []interfaces.EngineInterface
+	config  *interfaces.Configuration
+	engines []interfaces.EngineInterface
 }
 
 func NewEngine(conf *interfaces.Configuration) *Engine {
@@ -32,23 +32,23 @@ func (e *Engine) Run() {
 	for _, eng := range e.engines {
 		wg.Add(1)
 
-		go func (eng interfaces.EngineInterface) {
+		go func(eng interfaces.EngineInterface) {
 			defer wg.Done()
 			htmlData := e.downloadHTML(eng)
 			list := e.parseHTML(htmlData, eng)
 			eng.SetDataBundle(list)
-		}(eng);
+		}(eng)
 	}
 
 	wg.Wait()
 }
 
 func (e *Engine) ShowResult() {
-	fmt.Println("[+]Find Web Link V1 By rodlopes <dev.rodrigo.lopes@gmail.com>. \n")
-	fmt.Println("[+]Searchers availables")
+	fmt.Println("[+] Find Web Link V1 By rodlopes <dev.rodrigo.lopes@gmail.com>. \n")
+	fmt.Println("[+] Searchers availables")
 
 	for _, eng := range e.engines {
-		fmt.Printf("[+]\t%v found %v result(s).\n", eng.GetTitle(), len(eng.GetData()))
+		fmt.Printf("[+] %v \t result(s) found in %v.\n", len(eng.GetData()), eng.GetTitle())
 	}
 
 	fmt.Println()
@@ -59,23 +59,23 @@ func (e *Engine) ShowResult() {
 
 		fmt.Printf("[+] %v \n", eng.GetTitle())
 		for i, v := range eng.GetData() {
-			fmt.Printf("[+]%v\t %v\n", i, v)
+			fmt.Printf("[+] %v\t %v\n", i, v)
 		}
 		fmt.Println()
 	}
 }
 
 func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {
-	uri         := e.makeUrl(eng);
-	client      := &http.Client{}
-	req, err    := http.NewRequest("GET", uri, nil)
+	uri := e.makeUrl(eng)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", uri, nil)
 
 	if err != nil {
 		log.Fatalf("Error to create a new request for [%s] -> %s\n", uri, err.Error())
 	}
 
 	req.Header.Set("User-Agent", e.config.UserAgent)
-	res, err  := client.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
 		log.Fatalf("Error to read data of body -> %s\n", err.Error())
 	}
@@ -84,7 +84,6 @@ func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {
 
 	return string(data)
 }
-
 
 func (e *Engine) makeUrl(eng interfaces.EngineInterface) string {
 	uri := eng.GetUrl()
@@ -95,9 +94,8 @@ func (e *Engine) makeUrl(eng interfaces.EngineInterface) string {
 	return uri
 }
 
-
 func (e *Engine) parseHTML(html string, eng interfaces.EngineInterface) []string {
-	matched := eng.GetRegex().FindAllStringSubmatch(html,-1)
+	matched := eng.GetRegex().FindAllStringSubmatch(html, -1)
 
 	var list []string
 	for _, link := range matched {
