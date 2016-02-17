@@ -10,6 +10,7 @@ import (
 	"strings"
 	"strconv"
 	"fmt"
+	"sync"
 )
 
 type Engine struct {
@@ -26,22 +27,28 @@ func (e *Engine) AddEngine(eng ...interfaces.EngineInterface) {
 }
 
 func (e *Engine) Run() {
-
+	var wg sync.WaitGroup
 
 	for _, eng := range e.engines {
-		htmlData := e.downloadHTML(eng)
-		list     := e.parseHTML(htmlData, eng)
+		wg.Add(1)
 
-		eng.SetDataBundle(list)
+		go func (eng interfaces.EngineInterface) {
+			defer wg.Done()
+			htmlData := e.downloadHTML(eng)
+			list := e.parseHTML(htmlData, eng)
+			eng.SetDataBundle(list)
+		}(eng);
 	}
+
+	wg.Wait()
 }
 
 func (e *Engine) ShowResult() {
 	fmt.Println("[+]Find Web Link V1 By rodlopes <dev.rodrigo.lopes@gmail.com>. \n")
-	fmt.Println("[+] Searchers availables")
+	fmt.Println("[+]Searchers availables")
 
 	for _, eng := range e.engines {
-		fmt.Printf("[+]%v found %v result(s).\n", eng.GetTitle(), len(eng.GetData()))
+		fmt.Printf("[+]\t%v found %v result(s).\n", eng.GetTitle(), len(eng.GetData()))
 	}
 
 	fmt.Println()
@@ -52,14 +59,14 @@ func (e *Engine) ShowResult() {
 
 		fmt.Printf("[+] %v \n", eng.GetTitle())
 		for i, v := range eng.GetData() {
-			fmt.Printf("[+][%v] %v\n", i, v)
+			fmt.Printf("[+]%v\t %v\n", i, v)
 		}
 		fmt.Println()
 	}
 }
 
 func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {
-	uri         := eng.GetUrl();
+	uri         := e.makeUrl(eng);
 	client      := &http.Client{}
 	req, err    := http.NewRequest("GET", uri, nil)
 
@@ -94,6 +101,9 @@ func (e *Engine) parseHTML(html string, eng interfaces.EngineInterface) []string
 
 	var list []string
 	for _, link := range matched {
+		if !strings.HasPrefix(strings.ToLower(link[1]), "http") {
+			continue
+		}
 		list = append(list, link[1])
 	}
 

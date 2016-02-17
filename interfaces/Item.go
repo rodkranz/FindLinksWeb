@@ -1,6 +1,8 @@
 package interfaces
 
-import "regexp"
+import (
+	"regexp"
+)
 
 type Gas struct {
 	Title string

@@ -14,7 +14,7 @@ var SearchersDefault = []string{"google","yahoo"}
 func init() {
 	flag.StringVar(&config.Text, 	    "t", 		 "any news", 	        "text that you looking for.")
 	flag.StringVar(&config.Output, 	    "out", 		 "output.log", 	        "Define that result will be save at file.")
-	flag.StringVar(&config.UserAgent,   "use-agent", "Go-http-client/1.1",  "Change the browser that you will you in your search.")
+	flag.StringVar(&config.UserAgent,   "use-agent", "Go-http-client/1.2",  "Change the browser that you will you in your search.")
 	flag.IntVar(&config.Page, 		    "p", 		 1,				        "Pagination number.")
 	flag.Var(&config.Searchers, 	    "searchers", "Web Search")
 
