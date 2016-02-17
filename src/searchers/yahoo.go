@@ -1,6 +1,6 @@
 package searchers
 
-import "github.com/rodkranz/FindLinksWeb/interfaces"
+import "github.com/rodkranz/FindLinksWeb/src/interfaces"
 
 func NewYahoo() *interfaces.Gas {
 	return &interfaces.Gas{Title: "Yahoo",

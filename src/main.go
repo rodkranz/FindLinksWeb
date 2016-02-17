@@ -5,9 +5,9 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/rodkranz/FindLinksWeb/engine"
-	"github.com/rodkranz/FindLinksWeb/interfaces"
-	"github.com/rodkranz/FindLinksWeb/searchers"
+	"github.com/rodkranz/FindLinksWeb/src/engine"
+	"github.com/rodkranz/FindLinksWeb/src/interfaces"
+	"github.com/rodkranz/FindLinksWeb/src/searchers"
 )
 
 var config = &interfaces.Configuration{}

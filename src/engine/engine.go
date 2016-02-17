@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"github.com/rodkranz/FindLinksWeb/interfaces"
+	"github.com/rodkranz/FindLinksWeb/src/interfaces"
 
 	"fmt"
 	"io/ioutil"
