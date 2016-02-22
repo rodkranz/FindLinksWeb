@@ -3,7 +3,6 @@ package engine
 import (
 	"github.com/rodkranz/FindLinksWeb/src/interfaces"
 
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -26,7 +25,15 @@ func (e *Engine) AddEngine(eng ...interfaces.EngineInterface) {
 	e.engines = append(e.engines, eng...)
 }
 
-func (e *Engine) Run() {
+func (e *Engine) GetWord() string {
+	return e.config.Text
+}
+
+func (e *Engine) GetEngines() []interfaces.EngineInterface {
+	return e.engines;
+}
+
+func (e *Engine) Run(signalToContinue chan<- bool) {
 	var wg sync.WaitGroup
 
 	for _, eng := range e.engines {
@@ -41,28 +48,7 @@ func (e *Engine) Run() {
 	}
 
 	wg.Wait()
-}
-
-func (e *Engine) ShowResult() {
-	fmt.Println("[+] Find Web Link V1 By rodlopes <dev.rodrigo.lopes@gmail.com>. \n")
-	fmt.Println("[+] Searchers availables")
-
-	for _, eng := range e.engines {
-		fmt.Printf("[+] %v \t result(s) found in %v.\n", len(eng.GetData()), eng.GetTitle())
-	}
-
-	fmt.Println()
-	for _, eng := range e.engines {
-		if len(eng.GetData()) == 0 {
-			continue
-		}
-
-		fmt.Printf("[+] %v \n", eng.GetTitle())
-		for i, v := range eng.GetData() {
-			fmt.Printf("[+] %v\t %v\n", i, v)
-		}
-		fmt.Println()
-	}
+	signalToContinue <- true
 }
 
 func (e *Engine) downloadHTML(eng interfaces.EngineInterface) string {

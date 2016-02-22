@@ -9,6 +9,7 @@ type Gas struct {
 	Regex string
 	Url   string
 	Data  []string
+	Word  string
 }
 
 func (i *Gas) SetData(url string) {
@@ -31,6 +32,10 @@ func (i *Gas) GetTitle() string {
 
 func (i *Gas) GetUrl() string {
 	return i.Url
+}
+
+func (i *Gas) GetWord() string {
+	return i.Word
 }
 
 func (i *Gas) GetRegex() *regexp.Regexp {
